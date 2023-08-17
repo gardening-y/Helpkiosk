@@ -35,7 +35,7 @@ def add_cart(request, pk):
             if options:
                 cart_item.options.add(*options)
                 
-            messages.warning(request, '기존에 있던 다른마켓의 메뉴를 삭제합니다!')
+            # messages.warning(request, '기존에 있던 다른마켓의 메뉴를 삭제합니다!')
         else:
             if cart.cartitem_set.filter(menu=menu).exists():
                 messages.warning(request, '이미 담겨진 상품입니다.')
@@ -49,17 +49,13 @@ def add_cart(request, pk):
                 if options:
                     cart_item.options.add(*options)
                 
-                # cart_item.total_price = menu.price * int(quantity)
-
-                # if options:
-                #     option_total_price = sum(option.price for option in options)
-                #     cart_item.total_price += option_total_price
-                messages.success(request, '상품이 성공적으로 추가되었습니다!')
+                # messages.success(request, '상품이 성공적으로 추가되었습니다!')
         
+
         cart_item.save()
         cart.market = menu.category.market
         cart.save()
-
+        
         return redirect('sellers:seller_detail', cart.market.pk)
 
     context = {
@@ -72,22 +68,11 @@ def add_cart(request, pk):
 @login_required
 def cart(request):
     cart_items = CartItem.objects.filter(cart__user=request.user)
-
-    total_price = 0
-
-    for data in cart_items:
-        if data.menu:
-            if data.options.exists():
-                option_total_price = sum(option.price for option in data.options.all())
-                data.total_price = (data.menu.price * data.quantity) + option_total_price
-                total_price += data.total_price
-            else:
-                data.total_price = data.menu.price * data.quantity
-                total_price += data.total_price
+    cart = get_object_or_404(Cart, user=request.user)
 
     context = {
         'cart_items': cart_items,
-        'total_price': total_price
+        'cart': cart,
     }
     return render(request, 'buyers/cart.html', context)
 
@@ -95,6 +80,7 @@ def cart(request):
 def item_ajax(request, item_id, *args, **kwargs):
     data = json.loads(request.body)
     item = CartItem.objects.get(pk=item_id)
+    cart = get_object_or_404(Cart, user=request.user)
 
     quan = data.get('quanType')
     
@@ -109,7 +95,9 @@ def item_ajax(request, item_id, *args, **kwargs):
 
     context = {
         'id' : item_id,
-        'item' : item.quantity,
+        'quantity' : item.quantity,
+        'price' : item.total_price(),
+        'total' : cart.cart_total_price(),
     }
     
     return JsonResponse(context)
@@ -143,49 +131,6 @@ def clear_cart(request):
 
     return redirect('sellers:seller_detail', pk=market_id)
 
-# @login_required
-# def payment(request):
-#     if request.method == 'POST':
-#         total_amount = int(request.POST.get('total_price'))
-#         phone_number = request.POST.get('phone_number', '')
-#         request_text = request.POST.get('request_text')
-#         payment_method = request.POST.get('payment_method')
-#         order_type = request.POST.get('order_type')
-
-#         user_cart = Cart.objects.filter(user=request.user).first()
-#         payment = None
-
-#         if user_cart:
-#             existing_payment = Payment.objects.filter(cart=user_cart).first()
-
-#             if existing_payment:
-#                 existing_payment.total_amount = total_amount
-#                 existing_payment.need = request_text
-#                 existing_payment.phone_number = phone_number
-#                 existing_payment.payment_method = payment_method
-#                 existing_payment.order_type = order_type
-#                 existing_payment.save()
-#                 payment = existing_payment
-#             else:
-#                 payment = Payment.objects.create(
-#                     cart=user_cart,
-#                     total_amount=total_amount,
-#                     need=request_text,
-#                     phone_number=phone_number,
-#                     payment_method=payment_method,
-#                     order_type=order_type
-#                 )
-
-#         return render(request, 'buyers/payment.html', {
-#             'total_amount': total_amount,
-#             'phone_number': phone_number,
-#             'request_text': request_text,
-#             'payment_method': payment_method,
-#             'order_type': order_type,
-#             'payment': payment,
-#         })
-
-#     return redirect('buyers:cart')
 
 @login_required
 def payment(request):
@@ -207,21 +152,48 @@ def payment(request):
                 payment_method=payment_method,
                 order_type=order_type
             )
-        else:
-            payment = None
 
-        return render(request, 'buyers/payment.html', {
-            'total_amount': total_amount,
-            'phone_number': phone_number,
-            'request_text': request_text,
-            'payment_method': payment_method,
-            'order_type': order_type,
-            'payment': payment,
-        })
+            for cart_item in user_cart.cartitem_set.all():
+                item_total_price = cart_item.total_price()
+                payment_item = PaymentItem.objects.create(
+                    payment=payment,
+                    total_amount=item_total_price,
+                    menu=cart_item.menu,
+                    quantity=cart_item.quantity
+                )
+                payment_item.options.set(cart_item.options.all())
+
+            user_cart.cartitem_set.all().delete()
+
+            return render(request, 'buyers/payment.html', {
+                'total_amount': total_amount,
+                'phone_number': phone_number,
+                'request_text': request_text,
+                'payment_method': payment_method,
+                'order_type': order_type,
+                'payment': payment,
+            })
 
     return redirect('buyers:cart')
 
 
+
+
+
+
+
+
+
+
+
+# @login_required
+# def complete_payment(request):
+#     if request.method == 'POST':
+#         user_cart = Cart.objects.filter(user=request.user).first()
+#         if user_cart:
+#             user_cart.cart_items.all().delete()
+        
+#         return redirect('users:mypage')
 
 
 

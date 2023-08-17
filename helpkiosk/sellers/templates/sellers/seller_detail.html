@@ -15,13 +15,15 @@
 
 <body>
     <nav>
-        <div class="text21"><a href="#">&lt</a></div> {% comment %} 다시 seller_detail 페이지로 이동해야 돼요{% endcomment %}
+        <div class="text21"><a href="{% url 'sellers:seller_list' %}">&lt</a></div>
         <div class="text22"> SSOCK </div>
         <div></div>
     </nav>
-  {% if owner %}
+  <div id="container11">
+    {% if owner %}
   <article>
     <div class="store-name">{{ market.register.name }}</div>
+    <img class="main-img" src="{{market.register.logo.url}}" alt="">
     <div>
       <ul class="store-category">
         {% for category in categories %}
@@ -93,6 +95,7 @@
     </div>
 
     <div class="store-name">{{ market.register.name }}</div>
+    <img class="main-img" src="{{market.register.logo.url}}" alt="">
 
     <div>
       <ul class="store-category">
@@ -168,7 +171,7 @@
             <div class="pay1">
                 <div class="pay1-1">총 결제 금액</div>
                 {% comment %} <span class="price" style="display: none"> {% widthratio cart.quantity 1 cart.price %} </span> {% endcomment %}
-                <div class="pay1-2" id="total_price">₩ {{ total_price|intcomma }}</div>
+                <div class="pay1-2" id="total_price">₩ {{ cart_price |intcomma }}</div>
                 <form id="clear-cart" method="post" action="{% url 'buyers:clear_cart' %}">
                     {% csrf_token %}
                     <input type="hidden" name="market_id" value="{{market.pk}}" />
@@ -186,6 +189,7 @@
       </div>
 </article>
     {% endif %}
+  </div>
     <script>
       //사장님 버전이랑 고객용 버전이랑 다르게 작성 if문으로 두개 따로 처리해야함
       //정원 언니 일단 이렇게 따로따로 작성해서 표시해둘테니까 처리 부탁드려요!
@@ -226,14 +230,6 @@
             
             HTMLCollection.prototype.forEach = Array.prototype.forEach;
             
-            var total_price = 0;
-            
-            price_list.forEach(function(data){
-                total_price += Number(data.innerHTML);
-            })
-
-            document.getElementById("total_price").innerHTML = "₩ " + total_price;
-
             //유빈언니가 쓴 JS
             const modal = document.getElementById("modal")
             modal.style.display = "none";
