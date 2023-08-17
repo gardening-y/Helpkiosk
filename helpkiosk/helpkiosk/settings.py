@@ -155,7 +155,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
 
-LOG_FILE = '/home/ubuntu/liongram/log/django.log'
+LOG_FILE = '/home/ubuntu/Helpkiosk/helpkiosk/log/django.log'
 
 LOGGING = {
     'version': 1,
