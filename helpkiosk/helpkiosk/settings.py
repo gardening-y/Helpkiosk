@@ -240,3 +240,5 @@ LOGGING = {
         },
     }
 }
+
+CSRF_TRUSTED_ORIGINS = ['43.201.73.27']
