@@ -41,7 +41,10 @@ SECRET_KEY = get_secret('SECRET_KEY')
 DEBUG = False
 
 # ALLOWED_HOSTS = [] # 도메인, IP 'naver.com'
-ALLOWED_HOSTS = ['43.201.73.27'] # 도메인, IP 'naver.com'
+# ALLOWED_HOSTS = ['43.201.73.27'] # 도메인, IP 'naver.com'
+
+ALLOWED_HOSTS = ['43.201.73.27', 'localhost']
+
 
 
 # Application definition
