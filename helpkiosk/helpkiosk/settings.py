@@ -37,8 +37,8 @@ def get_secret(setting, secrets_dict=secrets):
 SECRET_KEY = get_secret('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 
-# DEBUG = True
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
 # ALLOWED_HOSTS = [] # 도메인, IP 'naver.com'
 # ALLOWED_HOSTS = ['43.201.73.27'] # 도메인, IP 'naver.com'
@@ -241,4 +241,4 @@ LOGGING = {
     }
 }
 
-CSRF_TRUSTED_ORIGINS = ['43.201.73.27']
+CSRF_TRUSTED_ORIGINS = ['http://43.201.73.27']
