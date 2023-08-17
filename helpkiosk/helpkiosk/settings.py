@@ -36,8 +36,11 @@ def get_secret(setting, secrets_dict=secrets):
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_secret('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
+
+# DEBUG = True
 DEBUG = False
 
+# ALLOWED_HOSTS = [] # 도메인, IP 'naver.com'
 ALLOWED_HOSTS = ['172.31.36.180'] # 도메인, IP 'naver.com'
 
 
@@ -135,9 +138,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static'),
+# ]
+STATIC_ROOT = BASE_DIR / 'static'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
