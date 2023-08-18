@@ -49,9 +49,19 @@ section {
     margin: 20px;
 }
 
+.text21 {
+    margin-left: 60px;
+    margin-right: 20px;
+}
+
 .text22 {
     text-align: center;
     font-weight:bold;
+}
+
+.text222 {
+    margin-left: 20px;
+    margin-right: 60px;
 }
 
 /*배너*/
@@ -177,11 +187,13 @@ section {
 
 .text0_wrap{
     display: flex;
+    justify-content: left;
     padding-bottom: 3%;
 }
 
 .img02{
-    margin-right:2%;
+    margin-right: 10px;
+    margin-left: 0;
 }
 
 .text02{

@@ -11,9 +11,9 @@
 <body>
   <nav>
       {% comment %} <div class="text21"><a href="{{ request.META.HTTP_REFERER }}"><</a></div> {% endcomment %}
-      <div class="text21"><a href="{% url 'buyers:payment' %}"><</a></div>
+      <div class="text21"><a href="{% url 'sellers:seller_list' %}"><</a></div>
       <div class="text22"> 마이페이지 </div>
-      <div><a href="#"><img src="{%static 'images/menu.png'%}"></a></div>
+      <div><a href="/users/start"><img src="{%static 'images/home.png'%}"></a></div>
   </nav>
   <div id="container">
     
@@ -43,19 +43,19 @@
         var box4 = document.getElementById("box4");
         
         box1.addEventListener("click", function() {
-          window.location.href = "{% url 'sellers:order_list' seller.pk%}"; //url 확인 부탁드려요!
+          window.location.href = "{% url 'sellers:order_list' pk=market.pk %}";
         });
         
         box2.addEventListener("click", function() {
-          window.location.href = "{% url 'sellers:seller_info' seller.pk%}";
+          window.location.href = "{% url 'sellers:seller_info' market.pk %}";
         });
         
         box3.addEventListener("click", function() {
-          window.location.href = "{% url 'sellers:seller_detail' seller.pk%}";
+          window.location.href = "{% url 'sellers:seller_detail' market.pk %}";
         });
         
         box4.addEventListener("click", function() {
-          window.location.href = "{% url 'sellers:my_qr' seller.pk%}";
+          window.location.href = "{% url 'sellers:my_qr' %}";
         });
       });
     </script>
@@ -116,6 +116,25 @@
       {% comment %} 이전 코드 {% endcomment %}
       <div id="wrap33-div">
         {% if paymentitems %}
+          {% for paymentitem in paymentitems reversed %}    
+            {% if paymentitem.payment.cart.market %}
+            <section class="wrap33">
+              <div class="polaroid2">
+                  <a href="#"><img src="{{ paymentitem.payment.cart.market.register.logo.url }}" alt="Image 2"></a>
+                  <div>
+                      <div class="text">{{ paymentitem.payment.cart.market.register.name }}</div>
+                      <div class="text">{{ paymentitem.payment.date }}</div>
+                  </div>
+              </div>
+            </section>
+          {% endif %}
+          {% empty %}
+          <div>주문내역이 없습니다</div>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <div id="wrap33-div">
+        {% if payments %}
           {% for paymentitem in paymentitems reversed %}    
             {% if paymentitem.payment.cart.market %}
             <section class="wrap33">
